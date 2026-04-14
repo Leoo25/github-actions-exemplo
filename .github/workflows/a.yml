@@ -1,10 +1,15 @@
-name: "Teste de Workflow 01x"
+name: Meu Workflow
 
 on:
   push:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      mensagem_input:
+        description: "Mensagem vinda do input"
+        required: true
+        default: "Olá do input!"
 
 env:
   EXEMPLO_VAR: "Valor Variavel de Exemplo"
@@ -34,8 +39,27 @@ jobs:
       - name: "Dados do Runner"
         run: |
           echo "Sistema operacional: ${RUNNER_OS}"
-          echo "diretório do runner: ${RUNNER_TEMP}"
+          echo "Diretório do runner: ${RUNNER_TEMP}"
           echo "Nome do runner: ${RUNNER_NAME}"
           echo "Versão do runner: ${RUNNER_VERSION}"
-          echo "Usuario: ${WHOAMI_USER}"
           echo "Diretório atual: ${PWD}"
+
+  job02:
+    name: "Job de Teste 02"
+    runs-on: ubuntu-latest
+    needs: job01 
+
+    steps:
+      - name: "Exibir informações"
+        run: |
+          echo "Echo 1: Iniciando job02"
+          echo "Echo 2: Variável -> $EXEMPLO_VAR"
+          echo "Echo 3: Input -> ${{ github.event.inputs.mensagem_input }}"
+
+      - name: "Usando Secret"
+        run: |
+          echo "Secret carregado com sucesso!"
+          # Exemplo de uso (não exibir o valor real em produção)
+          echo "Tamanho do secret: ${#MEU_SECRET}"
+        env:
+          MEU_SECRET: ${{ secrets.MEU_SECRET }}
